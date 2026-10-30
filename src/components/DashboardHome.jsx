@@ -1,5 +1,5 @@
 import React from 'react';
-import { Calendar, Receipt, PlusCircle, ClipboardList, Bell, Settings, ArrowRight, CheckCircle2, AlertCircle } from 'lucide-react';
+import { Calendar, Receipt, PlusCircle, ClipboardList, Bell, CheckCircle2, Moon } from 'lucide-react';
 import { getMoonPhaseInfo } from '../utils/lunar';
 
 export default function DashboardHome({
@@ -13,49 +13,53 @@ export default function DashboardHome({
   const moonInfo = getMoonPhaseInfo(today);
   const todayStr = today.toISOString().slice(0, 10);
 
-  // Filtros de citas
   const todayGrafts = clients.filter(c => c.status === 'pendiente' && c.serviceDate === todayStr);
   const totalPendingGrafts = clients.filter(c => c.status === 'pendiente');
   const pendingBags = bagReminders.filter(b => !b.isDone);
+  const formattedDate = today.toLocaleDateString('es-ES', {
+    weekday: 'long',
+    day: 'numeric',
+    month: 'long'
+  });
 
   return (
     <div className="dashboard-container">
-      {/* Banner Superior con Estado Lunar de Canarias */}
       <div className="dashboard-hero">
-        <h2 className="dashboard-hero-title">
-          <span>Panel Principal del Injertador</span>
-        </h2>
+        <div className="dashboard-heading">
+          <span className="dashboard-date">{formattedDate}</span>
+          <h2 className="dashboard-hero-title">El campo, en orden.</h2>
+        </div>
         <p className="dashboard-hero-subtitle">
-          Sistema especializado para la agricultura de las Islas Canarias. Recuerde que el calendario lunar marca los días propicios de savia baja.
+          Organiza los trabajos, consulta la luna y sigue cada injerto desde un solo lugar.
         </p>
 
         <div className={`lunar-banner-alert ${moonInfo.isWaning ? 'optimal' : 'waiting'}`}>
-          <div style={{ fontSize: '1.4rem' }}>{moonInfo.icon}</div>
-          <div>
-            <strong>Fase Lunar Hoy: {moonInfo.name} ({moonInfo.illumination}% iluminada)</strong>
-            <div style={{ fontSize: '0.85rem', marginTop: '2px' }}>
+          <span className="lunar-banner-icon" aria-hidden="true">
+            <Moon size={21} />
+          </span>
+          <div className="lunar-banner-copy">
+            <strong>Hoy: {moonInfo.name} <span>· {moonInfo.illumination}% iluminada</span></strong>
+            <div className="lunar-banner-note">
               {moonInfo.isWaning ? (
-                <span>⭕ <strong>LUNA MENGUANTE ACTIVA:</strong> Momento propicio para injertar hoy. La savia desciende y favorece la cicatrización del injerto.</span>
+                <span>Periodo menguante; día tradicionalmente favorable para injertar.</span>
               ) : (
-                <span>⚠️ <strong>NO ES LUNA MENGUANTE:</strong> En la tradición canaria no se recomienda injertar hoy. Consulte el calendario para las próximas fechas en menguante.</span>
+                <span>Consulta el calendario para planificar los próximos días de menguante.</span>
               )}
             </div>
           </div>
+          <span className="lunar-status-label">{moonInfo.isWaning ? 'Menguante' : 'Otra fase'}</span>
         </div>
       </div>
 
-      {/* MENÚ DE INICIO: BOTONES CUADRADOS EN COLUMNAS DE DOS
-          Requisito explícito de Guia_Developed.md */}
       <div className="square-menu-grid">
-        {/* BOTON 1: CALENDARIO */}
         <button
           className="square-menu-btn btn-calendario"
           onClick={() => onNavigate('calendar')}
           title="Ver Calendario con Lunas Menguantes"
         >
           {moonInfo.isWaning && (
-            <span className="square-btn-badge" style={{ background: '#d90429' }}>
-              Menguante Activa
+            <span className="square-btn-badge is-alert">
+              Menguante hoy
             </span>
           )}
           <div className="square-btn-icon-wrapper">
@@ -63,11 +67,10 @@ export default function DashboardHome({
           </div>
           <span className="square-btn-title">Calendario</span>
           <span className="square-btn-desc">
-            Ciclos lunares de Canarias y lunas menguantes en rojo
+            Fases lunares y días de trabajo
           </span>
         </button>
 
-        {/* BOTON 2: FACTURACIÓN */}
         <button
           className="square-menu-btn btn-facturacion"
           onClick={() => onNavigate('invoices')}
@@ -81,82 +84,79 @@ export default function DashboardHome({
           </div>
           <span className="square-btn-title">Facturación</span>
           <span className="square-btn-desc">
-            Crear, ver, editar y gestionar facturas fácilmente
+            Crea y consulta tus facturas
           </span>
         </button>
 
-        {/* BOTON 3: NUEVA CITA */}
         <button
           className="square-menu-btn btn-nuevacita"
           onClick={onOpenNewClientModal}
           title="Añadir Nuevo Cliente e Injerto"
         >
-          <span className="square-btn-badge" style={{ background: '#e65100' }}>
-            + Registrar
+          <span className="square-btn-badge is-action">
+            Nueva labor
           </span>
           <div className="square-btn-icon-wrapper">
             <PlusCircle size={38} />
           </div>
           <span className="square-btn-title">Nueva Cita</span>
           <span className="square-btn-desc">
-            Formulario rápido para nuevo cliente e injerto
+            Anota un cliente y su próximo injerto
           </span>
         </button>
 
-        {/* BOTON 4: LISTA DE INJERTOS HOY */}
         <button
           className="square-menu-btn btn-injertoshoy"
           onClick={() => onNavigate('grafts')}
           title="Ver Lista de Injertos y Citas"
         >
-          <span className="square-btn-badge" style={{ background: todayGrafts.length > 0 ? '#d90429' : '#1976d2' }}>
-            {todayGrafts.length} Hoy ({totalPendingGrafts.length} Pendientes)
+          <span className={`square-btn-badge ${todayGrafts.length > 0 ? 'is-alert' : ''}`}>
+            {todayGrafts.length} hoy · {totalPendingGrafts.length} pendientes
           </span>
           <div className="square-btn-icon-wrapper">
             <ClipboardList size={38} />
           </div>
           <span className="square-btn-title">Lista de Injertos</span>
           <span className="square-btn-desc">
-            Clientes, ubicaciones, árboles y marcar como completado
+            Servicios, clientes y trabajos pendientes
           </span>
         </button>
       </div>
 
-      {/* ACCESOS RÁPIDOS SECUNDARIOS */}
       <div className="secondary-menu-bar">
-        {/* Acceso a Avisos de Bolsas (30 Días) */}
-        <div 
+        <button
+          type="button"
           className="secondary-menu-btn"
           onClick={() => onNavigate('bags')}
         >
-          <div className="secondary-btn-icon" style={{ background: pendingBags.length > 0 ? '#ffe5e8' : '#e8f5e9', color: pendingBags.length > 0 ? '#d90429' : '#1b4332' }}>
+          <span className={`secondary-btn-icon ${pendingBags.length > 0 ? 'has-alert' : ''}`}>
             <Bell size={22} />
-          </div>
-          <div className="secondary-btn-text">
-            <h4>Avisos Retirada de Bolsas (30 Días)</h4>
-            <p>
+          </span>
+          <span className="secondary-btn-text">
+            <span className="secondary-btn-title">Retirada de bolsas</span>
+            <span className="secondary-btn-detail">
               {pendingBags.length > 0 
-                ? `${pendingBags.length} aviso(s) pendiente(s) de notificar por WhatsApp/llamada`
-                : 'Sin avisos urgentes pendientes'}
-            </p>
-          </div>
-        </div>
+                ? `${pendingBags.length} recordatorio(s) pendiente(s)`
+                : 'No hay recordatorios pendientes'}
+            </span>
+          </span>
+        </button>
 
-        {/* Acceso a Resumen / Histórico */}
-        <div 
+        <button
+          type="button"
           className="secondary-menu-btn"
           onClick={() => onNavigate('grafts-completed')}
         >
-          <div className="secondary-btn-icon">
+          <span className="secondary-btn-icon">
             <CheckCircle2 size={22} />
-          </div>
-          <div className="secondary-btn-text">
-            <h4>Histórico de Trabajos Completados</h4>
-            <p>
+          </span>
+          <span className="secondary-btn-text">
+            <span className="secondary-btn-title">Histórico de Trabajos Completados</span>
+            <span className="secondary-btn-detail">
               {clients.filter(c => c.status === 'completado').length} servicios finalizados con éxito
-            </p>
-          </div>
-        </div>
+            </span>
+          </span>
+        </button>
       </div>
     </div>
   );

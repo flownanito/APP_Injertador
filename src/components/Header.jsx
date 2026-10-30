@@ -1,9 +1,8 @@
 import React from 'react';
-import { Sprout, Moon, Bell, LogOut, Settings, Calendar, ShieldCheck } from 'lucide-react';
+import { Sprout, Bell, LogOut, Settings } from 'lucide-react';
 import { getMoonPhaseInfo } from '../utils/lunar';
 
 export default function Header({ 
-  currentView, 
   setCurrentView, 
   onLogout, 
   onOpenSettings, 
@@ -15,42 +14,44 @@ export default function Header({
   return (
     <header className="top-header">
       <div className="header-content">
-        <div 
+        <button
+          type="button"
           className="brand-section" 
           onClick={() => setCurrentView('home')}
           title="Ir al Menú Principal"
+          aria-label="Ir al inicio de Injertador Canarias"
         >
           <div className="brand-logo-badge">
-            <Sprout size={24} color="#d49a37" />
+            <Sprout size={23} />
           </div>
           <div className="brand-info">
             <h1>
               Injertador <span>Canarias</span>
             </h1>
-            <span>Gestión Agrícola & Ciclos Lunares</span>
+            <span>Agenda de campo</span>
           </div>
-        </div>
+        </button>
 
         <div className="header-actions">
-          {/* Pill con fase lunar actual de Canarias */}
-          <div 
+          <button
+            type="button"
             className={`lunar-today-pill ${moonInfo.isWaning ? 'waning' : ''}`}
             title={`Fase lunar hoy: ${moonInfo.name} (${moonInfo.illumination}%). ${moonInfo.recommendation}`}
             onClick={() => setCurrentView('calendar')}
-            style={{ cursor: 'pointer' }}
+            aria-label={`Abrir calendario. Hoy: ${moonInfo.name}, ${moonInfo.illumination}% iluminada`}
           >
-            <span>{moonInfo.icon}</span>
-            <span>Hoy: {moonInfo.name}</span>
+            <span className="lunar-pill-mark" aria-hidden="true" />
+            <span>Hoy · {moonInfo.name}</span>
             {moonInfo.isWaning && (
-              <span style={{ color: '#ff6b6b', fontWeight: 800 }}>• ¡Menguante (Injertar)!</span>
+              <span className="lunar-pill-status">Favorable para injertar</span>
             )}
-          </div>
+          </button>
 
-          {/* Acceso a Avisos de Bolsas */}
           <button 
             className="header-icon-btn" 
             onClick={() => setCurrentView('bags')}
             title="Avisos de Retirada de Bolsas (30 Días)"
+            aria-label={`Recordatorios de bolsas${pendingBagsCount > 0 ? `: ${pendingBagsCount} pendientes` : ''}`}
           >
             <Bell size={20} />
             {pendingBagsCount > 0 && (
@@ -58,20 +59,20 @@ export default function Header({
             )}
           </button>
 
-          {/* Ajustes y Empresa */}
           <button 
             className="header-icon-btn" 
             onClick={onOpenSettings}
             title="Ajustes de Administrador"
+            aria-label="Ajustes"
           >
             <Settings size={20} />
           </button>
 
-          {/* Cerrar Sesión Administrador */}
           <button 
             className="header-icon-btn" 
             onClick={onLogout}
             title="Bloquear / Salir"
+            aria-label="Cerrar sesión"
           >
             <LogOut size={20} />
           </button>
