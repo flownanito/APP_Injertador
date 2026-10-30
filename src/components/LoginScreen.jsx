@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Lock, KeyRound, Eye, EyeOff, ShieldCheck, Sprout } from 'lucide-react';
+import { KeyRound, Eye, EyeOff, ShieldCheck, Sprout } from 'lucide-react';
 import { loginUser } from '../utils/storage';
 
 export default function LoginScreen({ onLoginSuccess }) {
@@ -33,11 +33,11 @@ export default function LoginScreen({ onLoginSuccess }) {
 
         <div className="login-badge">
           <ShieldCheck size={16} />
-          Acceso Administrador Securizado
+          Acceso de administración
         </div>
 
-        <h2>Aplicación Injertador</h2>
-        <p>Control de citas de injerto, ciclos lunares en Canarias y facturación agrícola</p>
+        <h2>Injertador Canarias</h2>
+        <p>Servicios, calendario lunar y cobros del trabajo de campo.</p>
 
         <form onSubmit={handleSubmit}>
           <div className="form-group" style={{ textAlign: 'left', marginBottom: '18px' }}>

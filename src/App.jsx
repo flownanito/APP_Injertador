@@ -1,4 +1,5 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
+import { AlertTriangle, CheckCircle2 } from 'lucide-react';
 import Header from './components/Header';
 import LoginScreen from './components/LoginScreen';
 import DashboardHome from './components/DashboardHome';
@@ -159,31 +160,20 @@ export default function App() {
     <div className="app-wrapper">
       {/* Notificación Toast flotante */}
       {notification && (
-        <div style={{
-          position: 'fixed',
-          top: '20px',
-          right: '20px',
-          zIndex: 9999,
-          background: notification.type === 'success' ? '#1b4332' : '#d90429',
-          color: '#ffffff',
-          padding: '14px 20px',
-          borderRadius: '14px',
-          boxShadow: '0 10px 30px rgba(0,0,0,0.25)',
-          display: 'flex',
-          alignItems: 'center',
-          gap: '10px',
-          fontSize: '0.92rem',
-          fontWeight: 600,
-          animation: 'fadeIn 0.25s ease'
-        }}>
-          <span>{notification.type === 'success' ? '✓' : '⚠️'}</span>
+        <div
+          className={`toast-notification ${notification.type === 'success' ? 'is-success' : 'is-error'}`}
+          role="status"
+          aria-live="polite"
+        >
+          <span aria-hidden="true">
+            {notification.type === 'success' ? <CheckCircle2 size={19} /> : <AlertTriangle size={19} />}
+          </span>
           <span>{notification.text}</span>
         </div>
       )}
 
       {/* Cabecera Principal */}
       <Header
-        currentView={currentView}
         setCurrentView={setCurrentView}
         onLogout={handleLogout}
         onOpenSettings={() => setIsSettingsModalOpen(true)}
